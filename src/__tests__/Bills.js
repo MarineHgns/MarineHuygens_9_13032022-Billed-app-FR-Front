@@ -58,6 +58,32 @@ describe("Given I am connected as an employee", () => {
       });
     });
 
+    describe("When I am on Bill Page", () => {
+      test("Then it should return bills data", () => {
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname });
+        };
+
+        Object.defineProperty(window, "localStorage", { value: localStorageMock });
+
+        store.bills = jest.fn().mockImplementationOnce(() => {
+          return {
+            list: jest.fn().mockResolvedValue([{ data: () => ({ date: "" }) }]),
+          };
+        });
+
+        const bills = new Bills({
+          document,
+          onNavigate,
+          store: store,
+          localStorage,
+        });
+
+        const res = bills.getBills();
+        expect(res).toEqual(Promise.resolve({}));
+      });
+    });
+
     describe("When I click on the icon eye button", () => {
       test("A modal should open", () => {
         $.fn.modal = jest.fn();
