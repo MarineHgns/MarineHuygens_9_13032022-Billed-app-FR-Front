@@ -16,7 +16,9 @@ import userEvent from "@testing-library/user-event";
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
-      Object.defineProperty(window, "localStorage", { value: localStorageMock });
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
       window.localStorage.setItem(
         "user",
         JSON.stringify({
@@ -34,8 +36,10 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("Then bills should be ordered from earliest to latest", () => {
-      document.body.innerHTML = BillsUI({ data: bills });
-      const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map((a) => a.BillsUI);
+      document.body.innerHTML = BillsUI({
+        data: bills,
+      });
+      const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map((a) => a.innerHTML);
       const antiChrono = (a, b) => (a < b ? 1 : -1);
       const datesSorted = [...dates].sort(antiChrono);
       expect(dates).toEqual(datesSorted);
@@ -57,7 +61,9 @@ describe("Given I am connected as an employee", () => {
     describe("When I click on the icon eye button", () => {
       test("A modal should open", () => {
         $.fn.modal = jest.fn();
-        Object.defineProperty(window, "localStorage", { value: localStorageMock });
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
         window.localStorage.setItem(
           "user",
           JSON.stringify({
@@ -68,7 +74,7 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname });
         };
-        // const store = null;
+
         const billsContainer = new Bills({
           document,
           onNavigate,
@@ -88,12 +94,13 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("When I click on new bill button", () => {
-      $.fn.modal = jest.fn();
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
       };
 
-      Object.defineProperty(window, "localStorage", { value: localStorageMock });
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
       window.localStorage.setItem("user", JSON.stringify({ type: "Employee" }));
 
       document.body.innerHTML = BillsUI({ data: bills });
@@ -127,6 +134,7 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText("Loading...")).toBeTruthy();
     });
   });
+
   test("(if error) Then it should render ErrorPage", () => {
     document.body.innerHTML = BillsUI({ error: true });
     expect(screen.getByTestId("error-message")).toBeTruthy();
@@ -154,7 +162,9 @@ describe("Given I am user connected as employee", () => {
     describe("When an error occurs on API", () => {
       beforeEach(() => {
         jest.spyOn(store, "bills");
-        Object.defineProperty(window, "localStorage", { value: localStorageMock });
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
         window.localStorage.setItem(
           "user",
           JSON.stringify({
@@ -167,6 +177,7 @@ describe("Given I am user connected as employee", () => {
         document.body.appendChild(root);
         router();
       });
+
       test("fetches bills from an API and fails with 404 message error", async () => {
         store.bills.mockImplementationOnce(() => {
           return {
@@ -180,6 +191,15 @@ describe("Given I am user connected as employee", () => {
         document.body.innerHTML = BillsUI({ error: "Erreur 404" });
         const message = await screen.getByText(/Erreur 404/);
         expect(message).toBeTruthy();
+        expect(message).toMatchInlineSnapshot(`
+          <div
+            data-testid="error-message"
+          >
+            
+                    Erreur 404
+                  
+          </div>
+        `);
       });
 
       test("fetches messages from an API and fails with 500 message error", async () => {
@@ -195,6 +215,15 @@ describe("Given I am user connected as employee", () => {
         document.body.innerHTML = BillsUI({ error: "Erreur 500" });
         const message = await screen.getByText(/Erreur 500/);
         expect(message).toBeTruthy();
+        expect(message).toMatchInlineSnapshot(`
+          <div
+            data-testid="error-message"
+          >
+            
+                    Erreur 500
+                  
+          </div>
+        `);
       });
     });
   });
