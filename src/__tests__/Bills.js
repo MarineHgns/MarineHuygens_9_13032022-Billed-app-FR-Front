@@ -114,8 +114,11 @@ describe("Given I am connected as an employee", () => {
         userEvent.click(eye);
         expect(handleClickIconEye).toHaveBeenCalled();
 
-        const modale = screen.getByTestId("modaleFile");
-        expect(modale).toBeTruthy();
+        eye.addEventListener("click", (e) => {
+          handleClickIconEye(e.target);
+          const modale = screen.getByTestId("modaleFile");
+          expect(modale).toHaveClass("show");
+        });
       });
     });
 
